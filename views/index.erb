@@ -1,9 +1,9 @@
 <html>
 <body>
-  <h1> GIT LAUNCHED </h1>
-<% users.each do |user, starred_repos| %>
+  <h1>GIT LAUNCHED &#x1F680;</h1>
+<% users.each do |user| %>
 <ul>
-  <li><%= user %> really likes <a href="https://github.com/stars/<%= user %>">these repos</a></li>
+  <li><%= user["login"] %> really likes <a href="https://github.com/stars/<%= user["login"] %>">these repos</a></li>
 </ul>
 <% end %>
 </body>

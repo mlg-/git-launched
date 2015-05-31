@@ -15,6 +15,5 @@ get '/' do
                 })
   users = []
   response.each { |user| users << user }
-  end
   erb :index, locals: { users: users }
 end
