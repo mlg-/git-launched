@@ -1,0 +1,10 @@
+<html>
+<body>
+  <h1> GIT LAUNCHED </h1>
+<% users.each do |user, starred_repos| %>
+<ul>
+  <li><%= user %> really likes <a href="https://github.com/stars/<%= user %>">these repos</a></li>
+</ul>
+<% end %>
+</body>
+</html>
