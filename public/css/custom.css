@@ -1,0 +1,8 @@
+body {
+  margin: 2%;
+}
+
+ul, li {
+  list-style-image: none;
+  list-style-type: none;
+}
