@@ -28,7 +28,11 @@ get '/' do
                   })
     unless starred_repos.empty?
       current_user = user[0]
-      users[current_user] = starred_repos[0]["name"]
+      user_repo_array = []
+      starred_repos.each do |repo|
+        user_repo_array << repo
+      end
+      users["#{current_user}"] = starred_repos
     end
   end
 
