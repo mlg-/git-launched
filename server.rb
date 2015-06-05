@@ -6,6 +6,15 @@ require 'dotenv'
 
 Dotenv.load
 
+def db_connection
+  begin
+    connection = PG.connect(dbname: "todo")
+    yield(connection)
+  ensure
+    connection.close
+  end
+end
+
 def github_get(url)
   HTTParty.get(
       "#{url}",
