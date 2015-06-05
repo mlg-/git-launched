@@ -8,7 +8,7 @@ Dotenv.load
 
 def db_connection
   begin
-    connection = PG.connect(dbname: "todo")
+    connection = PG.connect(dbname: "gitlaunched")
     yield(connection)
   ensure
     connection.close
