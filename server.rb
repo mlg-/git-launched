@@ -12,6 +12,7 @@ def db_connection
   begin
     connection = PG.connect(dbname: "gitlaunched")
     yield(connection)
+  rescue PG::UniqueViolation
   ensure
     connection.close
   end
@@ -39,12 +40,14 @@ def load_users
 
 end
 
-# def get_users
-#
-# end
+def get_users
+  sql = "SELECT * FROM launchers"
+  @launchers = db_connection { |conn| conn.exec_params(sql) }
+end
 
 get '/' do
-  load_users
+  # load_users
+  get_users
   # users.each do |user|
   #   starred_repos = github_get("https://api.github.com/users/#{user[0]}/starred")
   #   unless starred_repos.empty?

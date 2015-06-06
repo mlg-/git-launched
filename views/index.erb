@@ -1,13 +1,7 @@
 
 <h1>GIT LAUNCHED &#x1F680;</h1>
-<% users.each do |user, starred_repos| %>
+<% @launchers.each do |name| %>
   <ul>
-    <li><%= user %> really likes these repos</li>
-      <ul>  <% unless starred_repos.empty? %>
-              <% starred_repos.each do |repo| %>
-                <li><a href="<%= repo["html_url"]%>"><%= repo["name"] %></a></li>
-              <% end %>
-            <% end %>
-      </ul>
+    <li><%= name["name"] %> really likes these repos</li>
   </ul>
 <% end %>
