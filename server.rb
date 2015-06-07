@@ -8,9 +8,24 @@ require_relative 'models/launcher.rb'
 
 Dotenv.load
 
+configure :development do
+  set :db_config, { dbname: "gitlaunched"}
+end
+
+configure :production do
+  uri = URI.parse(ENV["DATABASE_URL"])
+  set :db_config, {
+    host: uri.host,
+    port: uri.port,
+    dbname: uri.path.delete('/'),
+    user: uri.user,
+    password: uri.password
+  }
+end
+
 def db_connection
   begin
-    connection = PG.connect(dbname: "gitlaunched")
+    connection = PG.connect(settings.db_config)
     yield(connection)
   rescue PG::UniqueViolation
   ensure
