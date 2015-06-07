@@ -1,7 +1,9 @@
-
 <h1>GIT LAUNCHED &#x1F680;</h1>
-<% @launchers.each do |name| %>
-  <ul>
-    <li><%= name["name"] %> really likes these repos</li>
-  </ul>
-<% end %>
+<ul>
+  <% launchers.each do |launcher| %>
+  <li><%= launcher["launcher"] %> really likes
+      <a href="<%= launcher["url"] %>"><%= launcher["repo"] %></a>, which is
+      "<%= launcher["description"] %>"
+    </li>
+  <% end %>
+</ul>

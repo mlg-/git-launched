@@ -1,3 +1,12 @@
+require 'sinatra'
+require 'dotenv'
+require 'pg'
+require 'httparty'
+require 'pry'
+
+require_relative 'models/launcher.rb'
+
+
 Dotenv.load
 
 def db_connection
@@ -23,9 +32,9 @@ def load_users
   response = github_get("https://api.github.com/orgs/LaunchAcademy/members")
 
   response.each do |user|
-    @launcher = Launcher.new(user["login"])
+    launcher = Launcher.new(user["login"])
     new_launcher = []
-    new_launcher << @launcher.name
+    new_launcher << launcher.name
     sql = "INSERT INTO launchers(name) VALUES($1)"
     db_connection { |conn| conn.exec_params(sql, new_launcher) }
   end
@@ -33,26 +42,38 @@ def load_users
 end
 
 def get_users
-  sql = "SELECT * FROM launchers"
-  @launchers = db_connection { |conn| conn.exec_params(sql) }
+  sql = "SELECT launchers.name AS launcher, starred_repos.name AS repo, starred_repos.url, starred_repos.description
+         FROM launchers
+         JOIN starred_repos ON launchers.id = starred_repos.launcher_name"
+  launchers = db_connection { |conn| conn.exec_params(sql) }
 end
+
+def load_starred_repos
+  sql = "SELECT * FROM launchers"
+  launcher_list = db_connection { |conn| conn.exec_params(sql) }
+  launchers = launcher_list.map {|launcher| launcher["name"]}
+  launchers.each do |launcher|
+     starred_repos = github_get("https://api.github.com/users/#{launcher}/starred")
+     unless starred_repos.empty?
+       starred_repos.each do |repo|
+         get_foreign_key = "SELECT id FROM launchers WHERE name = '#{launcher}'"
+         foreign_keys = db_connection { |conn| conn.exec_params(get_foreign_key) }
+         launcher_id = foreign_keys[0]["id"].to_i
+         repo_info = [repo["id"], repo["name"], repo["html_url"],
+                      repo["description"], launcher_id]
+         sql = "INSERT INTO starred_repos(github_id, name, url, description, launcher_name)
+                VALUES($1, $2, $3, $4, $5)"
+         db_connection { |conn| conn.exec_params(sql, repo_info) }
+       end
+     end
+  end
+end
+
 
 get '/' do
   # load_users
-  get_users
-  # users.each do |user|
-  #   starred_repos = github_get("https://api.github.com/users/#{user[0]}/starred")
-  #   unless starred_repos.empty?
-  #     current_user = user[0]
-  #     user_repo_array = []
-  #     starred_repos.each do |repo|
-  #       user_repo_array << repo
-  #     end
-  #     users["#{current_user}"] = starred_repos
-  #   end
-  # end
-
+  # load_starred_repos
+  launcher_data = get_users
 #  launcher = @launcher.all
-
-  erb :index
+  erb :index, locals: { launchers: launcher_data }
 end
