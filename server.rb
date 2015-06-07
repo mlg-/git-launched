@@ -2,7 +2,6 @@ require 'sinatra'
 require 'dotenv'
 require 'pg'
 require 'httparty'
-require 'pry'
 
 require_relative 'models/launcher.rb'
 
