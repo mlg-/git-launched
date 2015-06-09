@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS starred_repos CASCADE;
 
 CREATE TABLE launchers (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) UNIQUE NOT NULL
+  name VARCHAR(255),
+  username VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE starred_repos (
@@ -12,5 +13,5 @@ CREATE TABLE starred_repos (
   name VARCHAR(255),
   url VARCHAR(255),
   description VARCHAR(1000),
-  launcher_name INT REFERENCES launchers (id) NOT NULL
+  launcher INT REFERENCES launchers (id) NOT NULL
 );
