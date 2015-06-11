@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/json'
 require 'dotenv'
 require 'pg'
 require 'httparty'
@@ -59,14 +60,66 @@ end
 def get_users
   sql = "SELECT launchers.username,
          launchers.name,
+         launchers.id AS launcher_id,
+         starred_repos.github_id AS repo_id,
          starred_repos.name AS starred_repo,
          starred_repos.url AS starred_repo_url,
          starred_repos.description AS starred_repo_description
          FROM launchers
          JOIN starred_repos ON launchers.id = starred_repos.launcher
-         ORDER BY launchers.name"
+         ORDER BY lower(starred_repos.name)"
   launchers = db_connection { |conn| conn.exec_params(sql) }
 end
+
+def parse_common_stars(launcher_data)
+  popular_repos = []
+  launcher_data.each do |launcher|
+    repo_star_counts = {}
+    popular_repos << repo_star_counts
+    popular_repos.each do |repo|
+      if repo_star_counts["repo_id"] == launcher["repo_id"] && repo_star_counts["users"].include?(launcher["username"]) == false
+         repo_star_counts["count"] += 1
+         repo_star_counts["users"] << launcher["username"]
+      else
+        repo_star_counts["repo_id"] = launcher["repo_id"]
+        repo_star_counts["name"] = launcher["starred_repo"]
+        repo_star_counts["count"] = 1
+        repo_star_counts["users"] = []
+        repo_star_counts["users"] << launcher["username"]
+      end
+    end
+  end
+end
+
+def clean_data
+  intermediate_array = []
+  get_users.each do |repo|
+    clean_hash = {}
+    clean_hash["id"] = repo["repo_id"]
+    clean_hash["name"] = repo["starred_repo"]
+    clean_hash["count"] = 0
+    clean_hash["users"] = []
+    clean_hash["users"] << repo["username"]
+    intermediate_array << clean_hash
+  end
+  sub_array = intermediate_array.dup
+  intermediate_array.each do |super_hash|
+    sub_array.each do |sub_hash|
+      if super_hash["id"] == sub_hash["id"]
+        super_hash["count"] += 1
+        super_hash["users"] << sub_hash["users"][0] if super_hash["users"] != sub_hash["users"]
+      end
+    end
+  end
+  duplicate_ids = []
+  intermediate_array.each do |item|
+    if !duplicate_ids.include?(item["id"])
+      duplicate_ids << item["id"]
+    end
+  end
+  binding.pry
+end
+
 
 def load_starred_repos
   sql = "SELECT * FROM launchers"
@@ -89,6 +142,8 @@ def load_starred_repos
   end
 end
 
+
+
 # def load_personal_repos
 
 # scrape data from the source html of the summer-2015 team page, since we
@@ -105,6 +160,6 @@ get '/' do
   # load_users
   # load_starred_repos
   launcher_data = get_users
-#  launcher = @launcher.all
-  erb :index, locals: { launchers: launcher_data }
+  popular_repos = clean_data
+  erb :index, locals: { launchers: launcher_data, popular_repos: popular_repos }
 end
