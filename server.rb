@@ -77,6 +77,12 @@ def get_users
   launchers = db_connection { |conn| conn.exec_params(sql) }
 end
 
+def parse_user_data
+  sql = "SELECT username, name, avatar, followers, repos
+         FROM launchers"
+  launchers = db_connection { |conn| conn.exec_params(sql) }
+end
+
 def parse_common_stars
   intermediate_array = []
   get_users.each do |repo|
@@ -140,8 +146,9 @@ end
 
 
 get '/' do
-   load_users
-   load_starred_repos
+  # load_users
+  # load_starred_repos
   popular_repos = parse_common_stars
-  erb :index, locals: { popular_repos: popular_repos }
+  launchers = parse_user_data
+  erb :index, locals: { popular_repos: popular_repos, launchers: launchers }
 end

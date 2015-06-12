@@ -2,11 +2,13 @@
 <ul>
   <% popular_repos.each do |repo| %>
   <li><a href="<%= repo["url"] %>"><%= repo["name"] %></a>
-    is described as "<%= repo["description"] %>".
+    is described as "<%= repo["description"] %>"
     <% if repo["users"].count > 1 %>
     <ul>Liked by:
       <% repo["users"].each do |user| %>
-        <li><a href="http://github.com/<%= user %>"><%= user %></li>
+      <% current = launchers.select {|launcher| launcher["username"] = user} %>
+      <% binding.pry %>
+        <li><img src="<%= current %>"/><a href="http://github.com/<%= user %>"><%= user %></li>
       <% end %>
     </ul>
     <% else %>
