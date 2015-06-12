@@ -1,16 +1,30 @@
+
 .page-wrapper {
-  padding: 4%;
+  padding: 0 5%;
   margin: 0 auto;
 }
 
 nav {
+  font-family: 'Gloria Hallelujah', cursive;
   text-align: center;
 }
 
-ul.main-nav li{
+nav h1 {
+  font-family: 'Gloria Hallelujah', cursive;
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+ul.main-nav li {
   display: inline-block;
   margin: 2em;
   font-size: 1.2em;
+}
+
+ul.main-nav li a {
+  color: #421868;
 }
 
 ul, li {
