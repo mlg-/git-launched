@@ -6,9 +6,7 @@
     <% if repo["users"].count > 1 %>
     <ul>Liked by:
       <% repo["users"].each do |user| %>
-      <% current = launchers.select {|launcher| launcher["username"] = user} %>
-      <% binding.pry %>
-        <li><img src="<%= current %>"/><a href="http://github.com/<%= user %>"><%= user %></li>
+        <li><img class="icon" src="<%= launchers["#{user}"] %>"/><a href="http://github.com/<%= user %>"><%= user %></li>
       <% end %>
     </ul>
     <% else %>

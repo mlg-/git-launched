@@ -6,3 +6,16 @@ ul, li {
   list-style-image: none;
   list-style-type: none;
 }
+
+li {
+  color: #421868;
+  font-size: 1.2em;
+  display: inline-block;
+  margin: 10px;
+}
+
+img.icon{
+  max-width: 80px;
+  margin: 10px;
+  display: inline-block;
+}

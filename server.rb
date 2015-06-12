@@ -81,6 +81,11 @@ def parse_user_data
   sql = "SELECT username, name, avatar, followers, repos
          FROM launchers"
   launchers = db_connection { |conn| conn.exec_params(sql) }
+  launch_data = {}
+  launchers.each do |launcher|
+    launch_data[launcher["username"]] = launcher["avatar"]
+  end
+  launch_data
 end
 
 def parse_common_stars
