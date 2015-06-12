@@ -4,7 +4,10 @@ DROP TABLE IF EXISTS starred_repos CASCADE;
 CREATE TABLE launchers (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255),
-  username VARCHAR(255) UNIQUE NOT NULL
+  username VARCHAR(255) UNIQUE NOT NULL,
+  avatar VARCHAR(255),
+  followers VARCHAR(255),
+  repos INT
 );
 
 CREATE TABLE starred_repos (

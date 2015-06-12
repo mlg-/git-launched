@@ -50,8 +50,13 @@ def load_users
   team_members.each do |user|
     full_name = github_get("https://api.github.com/users/#{user[0]}")
     launcher = Launcher.new(user[0], full_name["name"])
-    values = [launcher.username, launcher.name]
-    sql = "INSERT INTO launchers(username, name) VALUES($1, $2)"
+    launcher.avatar = full_name["avatar_url"]
+    launcher.followers = full_name["followers"]
+    launcher.personal_repos = full_name["public_repos"]
+    values = [launcher.username, launcher.name, launcher.avatar,
+              launcher.followers, launcher.personal_repos]
+    sql = "INSERT INTO launchers(username, name, avatar, followers, repos)
+          VALUES($1, $2, $3, $4, $5)"
     db_connection { |conn| conn.exec_params(sql, values) }
   end
 
@@ -97,7 +102,7 @@ def parse_common_stars
   end
 final = intermediate_array.uniq {|x| x["id"] }
 final_sorted = final.sort_by {|x| x["count"] }
-final_sorted.reverse
+final_sorted.reverse.first(20)
 end
 
 
@@ -135,8 +140,8 @@ end
 
 
 get '/' do
-  # load_users
-  # load_starred_repos
+   load_users
+   load_starred_repos
   popular_repos = parse_common_stars
   erb :index, locals: { popular_repos: popular_repos }
 end
