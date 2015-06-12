@@ -62,6 +62,7 @@ def get_users
          launchers.name,
          launchers.id AS launcher_id,
          starred_repos.github_id AS repo_id,
+         starred_repos.id AS pg_repo_id,
          starred_repos.name AS starred_repo,
          starred_repos.url AS starred_repo_url,
          starred_repos.description AS starred_repo_description
@@ -71,35 +72,18 @@ def get_users
   launchers = db_connection { |conn| conn.exec_params(sql) }
 end
 
-def parse_common_stars(launcher_data)
-  popular_repos = []
-  launcher_data.each do |launcher|
-    repo_star_counts = {}
-    popular_repos << repo_star_counts
-    popular_repos.each do |repo|
-      if repo_star_counts["repo_id"] == launcher["repo_id"] && repo_star_counts["users"].include?(launcher["username"]) == false
-         repo_star_counts["count"] += 1
-         repo_star_counts["users"] << launcher["username"]
-      else
-        repo_star_counts["repo_id"] = launcher["repo_id"]
-        repo_star_counts["name"] = launcher["starred_repo"]
-        repo_star_counts["count"] = 1
-        repo_star_counts["users"] = []
-        repo_star_counts["users"] << launcher["username"]
-      end
-    end
-  end
-end
-
-def clean_data
+def parse_common_stars
   intermediate_array = []
   get_users.each do |repo|
     clean_hash = {}
     clean_hash["id"] = repo["repo_id"]
+    clean_hash["pg_id"] = repo["pg_repo_id"]
     clean_hash["name"] = repo["starred_repo"]
     clean_hash["count"] = 0
     clean_hash["users"] = []
     clean_hash["users"] << repo["username"]
+    clean_hash["url"] = repo["starred_repo_url"]
+    clean_hash["description"] = repo["starred_repo_description"]
     intermediate_array << clean_hash
   end
   sub_array = intermediate_array.dup
@@ -111,13 +95,9 @@ def clean_data
       end
     end
   end
-  duplicate_ids = []
-  intermediate_array.each do |item|
-    if !duplicate_ids.include?(item["id"])
-      duplicate_ids << item["id"]
-    end
-  end
-  binding.pry
+final = intermediate_array.uniq {|x| x["id"] }
+final_sorted = final.sort_by {|x| x["count"] }
+final_sorted.reverse
 end
 
 
@@ -142,8 +122,6 @@ def load_starred_repos
   end
 end
 
-
-
 # def load_personal_repos
 
 # scrape data from the source html of the summer-2015 team page, since we
@@ -159,7 +137,6 @@ end
 get '/' do
   # load_users
   # load_starred_repos
-  launcher_data = get_users
-  popular_repos = clean_data
-  erb :index, locals: { launchers: launcher_data, popular_repos: popular_repos }
+  popular_repos = parse_common_stars
+  erb :index, locals: { popular_repos: popular_repos }
 end
