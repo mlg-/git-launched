@@ -1,5 +1,16 @@
-body {
-  margin: 2%;
+.page-wrapper {
+  padding: 4%;
+  margin: 0 auto;
+}
+
+nav {
+  text-align: center;
+}
+
+ul.main-nav li{
+  display: inline-block;
+  margin: 2em;
+  font-size: 1.2em;
 }
 
 ul, li {
@@ -7,15 +18,36 @@ ul, li {
   list-style-type: none;
 }
 
-li {
+ol li {
+  list-style-type: decimal;
+}
+
+span.filler {
+  color: black;
+}
+
+li.users {
   color: #421868;
-  font-size: 1.2em;
+  font-weight: bold;
   display: inline-block;
   margin: 10px;
+}
+
+li.users a {
+  color: #8ED07E;
+}
+
+li.repo-slug {
+  font-size: 1.5em;
+  color: #9E54C3;
 }
 
 img.icon{
   max-width: 80px;
   margin: 10px;
   display: inline-block;
+}
+
+img.star {
+  max-width: 100px;
 }

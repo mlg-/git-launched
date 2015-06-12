@@ -11,12 +11,27 @@
 
   <body>
 
-    <%= yield %>
+    <nav>
+      <h1>GIT LAUNCHED &#x1F680;</h1>
+      <ul class="main-nav">
+        <li>Likers Gonna Like</li>
+        <li>Popularity Contest</li>
+        <li>Beast Mode</li>
+        <li>Get Friendly</li>
+      </ul>
+    </nav>
 
-    <script src="js/vendor/jquery.js"></script>
-    <script src="js/foundation.min.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
+    <div class="page-wrapper">
+
+      <%= yield %>
+
+      <script src="js/vendor/jquery.js"></script>
+      <script src="js/foundation.min.js"></script>
+      <script>
+        $(document).foundation();
+      </script>
+    </div>
+
   </body>
+
 </html>
