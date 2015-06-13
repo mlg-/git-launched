@@ -113,7 +113,7 @@ def parse_common_stars
   end
 final = intermediate_array.uniq {|x| x["id"] }
 final_sorted = final.sort_by {|x| x["count"] }
-final_sorted.reverse.first(20)
+final_sorted.reverse
 end
 
 
@@ -153,7 +153,11 @@ end
 get '/' do
   # load_users
   # load_starred_repos
+  erb :index
+end
+
+get '/likers' do
   popular_repos = parse_common_stars
   launchers = parse_user_data
-  erb :index, locals: { popular_repos: popular_repos, launchers: launchers }
+  erb :likers, locals: { popular_repos: popular_repos, launchers: launchers }
 end

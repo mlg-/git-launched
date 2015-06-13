@@ -1,0 +1,32 @@
+<h2 class="text-center">Likers Gonna Like</h2>
+<ol>
+  <% popular_repos.each do |repo| %>
+  <li class="repo-slug"><a href="<%= repo["url"] %>"><%= repo["name"] %></a>
+    <span class="filler">is described as</span> "<%= repo["description"] %>"
+    <% if repo["users"].count > 1 %>
+    <ul>
+      <li class="users"><img class="star" src="/images/star.png"/><br/>
+      Starred By
+      </li>
+      <% repo["users"].each do |user| %>
+        <li class="users">
+          <img class="icon" src="<%= launchers["#{user}"] %>"/><br/>
+          <a href="http://github.com/<%= user %>"><%= user %></li>
+      <% end %>
+    </ul>
+    <% else %>
+    <ul>
+      <li class="users"><img class="star" src="/images/star.png"/><br/>
+      Starred By
+      </li>
+      <li class="users">
+        <a href="http://github.com/<%= repo["users"][0] %>">
+        <img class="icon" src="<%= launchers["#{repo["users"][0]}"] %>"/><br/>
+        <%= repo["users"][0] %>
+        </a>
+      </li>
+    </ul>
+    <% end %>
+  </li>
+  <% end %>
+</ol>
