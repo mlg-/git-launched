@@ -1,17 +1,15 @@
 require 'sinatra'
 require 'sinatra/json'
+require 'sinatra/activerecord'
+require 'sinatra/reloader'
 require 'dotenv'
 require 'pg'
 require 'httparty'
-require 'pry'
 
 require_relative 'models/launcher.rb'
 
-
-Dotenv.load
-
-configure :development do
-  set :db_config, { dbname: "gitlaunched"}
+configure do
+  set :views, 'app/views'
 end
 
 configure :production do
@@ -24,6 +22,21 @@ configure :production do
     password: uri.password
   }
 end
+
+configure :development do
+  set :db_config, { dbname: "gitlaunched"}
+end
+
+configure :development, :test do
+  require 'pry'
+end
+
+Dir[File.join(File.dirname(__FILE__), 'app', '**', '*.rb')].each do |file|
+  require file
+  also_reload file
+end
+
+Dotenv.load
 
 def db_connection
   begin
